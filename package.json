@@ -1,0 +1,29 @@
+{
+  "name": "mineauth-client2",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "prepare": "panda codegen",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@ark-ui/react": "^3.0.2",
+    "jotai": "^2.8.2",
+    "next": "14.2.3",
+    "next-auth": "^5.0.0-beta.18",
+    "react": "^18",
+    "react-dom": "^18"
+  },
+  "devDependencies": {
+    "@pandacss/dev": "^0.40.1",
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.3",
+    "typescript": "^5"
+  }
+}
