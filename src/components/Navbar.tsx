@@ -5,7 +5,7 @@ import LoginButton from "@/components/LoginButton";
 
 function Header() {
     return (
-        <>
+        <div className={header}>
             <Link href="/">
                 <div className={logo}>
                     MineAuth Client
@@ -17,9 +17,18 @@ function Header() {
                 </Link>
                 <LoginButton/>
             </div>
-        </>
+        </div>
     )
 }
+
+const header = css({
+    display: "flex",
+    marginTop: "25px",
+    paddingRight: "160px",
+    paddingLeft: "160px",
+    marginBottom: "40px",
+    justifyContent: "center"
+});
 
 const logo = css({
     padding: "10px",
@@ -28,9 +37,9 @@ const logo = css({
 
 const linkBoxStyle = css({
     textAlign: "center",
-    paddingTop: "10px",
+    paddingTop: "20px",
     paddingLeft: "40px",
-    paddingRight: "40px",
+    paddingRight: "60px",
     fontSize: "17px",
 });
 

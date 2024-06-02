@@ -1,39 +1,93 @@
-'use client';
-import {useSession} from "next-auth/react";
-import Link from "next/link";
-import {ExtendedSession} from "@/auth";
+import {auth, ExtendedSession, signIn, signOut} from "@/auth";
 import Image from "next/image";
 import React from "react";
 import {css} from "../../styled-system/css";
+import {Menu} from '@ark-ui/react'
+import PersonIcon from '@mui/icons-material/Person';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import LogoutIcon from '@mui/icons-material/Logout';
 
-function LoginButton() {
-    const {data: session} = useSession();
+async function LoginButton() {
+    const session = await auth();
     if (!session) {
         return (
-            <Link href="/auth/login">
-                <div className={LoginBoxStyle}>ログイン</div>
-            </Link>
+            <form
+                action={async () => {
+                    "use server"
+                    await signIn("MineAuth")
+
+                }}
+            >
+                <button className={loginBoxStyle} type="submit">
+                    <span>ログイン</span>
+                </button>
+            </form>
         );
     } else {
         return <PlayerHead/>;
     }
 }
 
-function PlayerHead() {
-    const {data: session} = useSession();
+async function PlayerHead() {
+    const session = await auth();
     const sessionData = session as ExtendedSession;
     return (
-        <Link href="/my-page">
-            <div className={headStyle}>
-                <Image
-                    className={headImage}
-                    src={sessionData.user?.image ?? "https://crafthead.net/avatar/Steave" + "/64.png"}
-                    width="45"
-                    height="45"
-                    alt="logo"
-                />
-            </div>
-        </Link>
+        <div>
+            <Menu.Root>
+                <Menu.Trigger>
+                    <Image
+                        className={headImage}
+                        src={sessionData.user?.image ?? "https://crafthead.net/avatar/Steave" + "/64.png"}
+                        width="45"
+                        height="45"
+                        alt="logo"
+                    />
+                </Menu.Trigger>
+                <Menu.Positioner>
+                    <Menu.Content>
+                        <Menu.ItemGroup className={menuStyle}>
+                            <Menu.ItemGroupLabel className={menuItems}>My Account</Menu.ItemGroupLabel>
+                            <Menu.Separator/>
+                            <Menu.Item className={menuItems} value="profile">
+                                <PersonIcon className={css({marginRight: "10px"})}/>
+                                Profile
+                            </Menu.Item>
+                            <Menu.Item className={menuItems} value="add">
+                                <div>
+                                    <form
+                                        action={async (formData) => {
+                                            "use server"
+                                            await signOut()
+                                        }}
+                                    >
+                                        <button type="submit">
+                                            <PersonAddIcon className={css({marginRight: "10px"})}/>
+                                            Add account
+                                        </button>
+                                    </form>
+                                </div>
+                            </Menu.Item>
+                            <Menu.Item className={menuItems} value="logout">
+                                <div>
+                                    <form
+                                        action={async (formData) => {
+                                            "use server"
+                                            await signOut()
+                                        }}
+                                    >
+                                        <button type="submit">
+                                            <LogoutIcon className={css({marginRight: "10px"})}/>
+                                            Sign out
+                                        </button>
+                                    </form>
+                                </div>
+                            </Menu.Item>
+                        </Menu.ItemGroup>
+                    </Menu.Content>
+                </Menu.Positioner>
+            </Menu.Root>
+        </div>
+
     );
 }
 
@@ -44,18 +98,28 @@ function PlayerHead() {
 // recoil.
 // selector.
 // style.
-const LoginBoxStyle = css({
+const loginBoxStyle = css({
     textAlign: "center",
-    justifyContent: "center",
-    paddingLeft: "25px",
-    paddingRight: "25px",
-    paddingBottom: "10px",
-    paddingTop: "10px",
-    marginLeft: "25px",
-    color: "#ffffff",
-    borderRadius: "10px",
-    fontSize: "17px",
-    background: "#0066ff",
+    justifyContent:
+        "center",
+    paddingLeft:
+        "25px",
+    paddingRight:
+        "25px",
+    paddingBottom:
+        "10px",
+    paddingTop:
+        "10px",
+    marginLeft:
+        "25px",
+    color:
+        "#ffffff",
+    borderRadius:
+        "10px",
+    fontSize:
+        "17px",
+    background:
+        "#0066ff",
 });
 
 const headStyle = css({
@@ -64,15 +128,39 @@ const headStyle = css({
 
 const headImage = css({
     borderRadius: "12%",
+    margin:
+        "10px",
 });
 
+const menuStyle = css({
+    backgroundColor: "rgba(100,166,223,0.5)",
+    borderRadius:
+        "5px",
+    padding:
+        "10px",
+    margin:
+        "10px",
+    border: "1px solid #000000",
+});
+
+
+const menuItems = css({
+    padding: "15px",
+    paddingRight:
+        "40px",
+    fontSize:
+        "0.9rem",
+});
 
 
 const header = css({
     display: "flex",
-    paddingTop: "25px",
-    paddingBottom: "40px",
-    background: "#82e477",
+    paddingTop:
+        "25px",
+    paddingBottom:
+        "40px",
+    background:
+        "#82e477",
 });
 // ssr ssg isr .
 // global function.
