@@ -1,7 +1,6 @@
 "use client";
 
 import React, {useEffect} from "react";
-
 import {redirect} from "next/navigation";
 import {signIn, useSession} from "next-auth/react";
 

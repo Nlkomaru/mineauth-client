@@ -1,31 +1,50 @@
-import React, { useState, useEffect } from 'react';
+
+import React from 'react';
+import {atom, useAtom, useAtomValue} from 'jotai';
+import {css} from "../../styled-system/css";
+
+export const userNameAtom = atom("");
+const imageAtom = atom((get) => `https://minotar.net/helm/${get(userNameAtom)}/32.png`);
+
 
 function UserNameForm() {
-    let [id, setId] = useState(''); // state for input value
-    const [imageUrl, setImageUrl] = useState(''); // state for image URL
+    const [id, setId] = useAtom(userNameAtom);
+    const imageUrl = useAtomValue(imageAtom);
 
-    // Update image URL whenever 'id' changes
-    useEffect(() => {
-        if (!id) id = 'Notch'; // default to Steve if no username is provided
-        setImageUrl(`https://minotar.net/helm/${id}/32.png`);
-    }, [id]);
 
-    const handleInputChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
+    const handleInputChange = (event: { target: { value: React.SetStateAction<string>}}) => {
         setId(event.target.value);
     };
 
     return (
-        <form className="w-full max-w-xs space-y-6 rounded bg-white p-8 shadow-md">
-            <input
-                type="text"
-                id="username"
-                name="username"
-                placeholder="username"
-                className="w-full bg-gray-100 text-gray-900 rounded-lg px-4 py-2"
-                value={id}
-                onChange={handleInputChange}
-            />
-            <img src={imageUrl} alt="Player head" />
+        <form>
+            <div className={css({
+                position: "relative",
+                padding: "10px",
+                borderRadius: "5px",
+                width: "400px",
+            })}>
+                <img src={imageUrl} className={css({
+                    position: "absolute",
+                    width: "32px",
+                    bottom: "1rem",
+                    right: "20px",
+                })} alt="Player head"/>
+                <input
+                    type="text"
+                    id="playerName"
+                    name="PlayerName"
+                    placeholder="username"
+                    className={css({
+                        padding: "10px",
+                        borderRadius: "5px",
+                        border: "1px solid #ccc",
+                        width: "100%",
+                    })}
+                    value={id}
+                    onChange={handleInputChange}
+                />
+            </div>
         </form>
     );
 }

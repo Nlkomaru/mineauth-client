@@ -1,34 +1,54 @@
 'use client';
+
 import {NextPage} from "next";
 import Head from "next/head";
 import {ExtendedSession} from "@/auth";
+import UserNameForm, {userNameAtom} from "@/components/UserNameForm";
+import {css} from "../../../styled-system/css";
+import {useAtomValue} from "jotai";
 import {useSession} from "next-auth/react";
 import {useEffect, useState} from "react";
-import UserNameForm from "@/components/UserNameForm";
 
+const Home: NextPage = () =>{
+    const {data: session} = useSession()
+    const sessionData = session as ExtendedSession;
 
-const Home: NextPage = () => {
-    const {data: session} = useSession();
-    const sessionData = (session as ExtendedSession)
-
-    const [balance, setBalance] = useState(null);
+    const [balance, setBalance] = useState<string | null>(null);
 
     useEffect(() => {
-        if (sessionData) {
-            const fetchData = async () => {
-                let res = await fetch(`/server/main/api/v1/plugins/vault/balance/me`,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${sessionData.accessToken}`
-                        }
-                    });
+        const fetchBalance = async () => {
+            const response = await fetch("main/api/v1/plugins/vault/balance/me", {
+                headers: {
+                    Authorization: `Bearer ${sessionData?.accessToken}`
+                }
+            });
+            const data = await response.json();
+            setBalance(data.balance);
+        };
 
-                let user = await res.json();
-                setBalance(user.balance);
-            };
-            fetchData().then(r => console.log(r));
-        }
+        fetchBalance().catch(() => setBalance("Error"));
     }, [sessionData]);
+
+    const name = useAtomValue(userNameAtom);
+
+    const onSubmit = async (event: React.FormEvent) => {
+        event.preventDefault(); // フォームのデフォルトの送信動作を防ぐ
+        alert("送金しました")
+        const target = await getUniqueId(name);
+        const amount : string = (document.getElementById("amount") as HTMLInputElement).value;
+        const res = await fetch("main/api/v1/plugins/vault/send", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${sessionData?.accessToken}`
+            },
+            body: JSON.stringify({
+                target: target,
+                amount: amount
+            })
+        });
+        console.log(res);
+    }
 
     return (<div>
         <Head>
@@ -37,7 +57,31 @@ const Home: NextPage = () => {
             <link rel="icon" href="/favicon.png"/>
         </Head>
         {balance}
-        <UserNameForm/>
+        <div className={css({marginLeft: "30px"})}>
+            ユーザー名
+            <UserNameForm/>
+        </div>
+        <div className={css({marginLeft: "30px"})}>
+            金額
+            <div>
+                <input id="amount" type={"number"} className={css({
+                    padding: "10px",
+                    margin: "10px",
+                    borderRadius: "5px",
+                    width: "380px",
+                    border: "1px solid #ccc",
+                })}>
+                </input>
+            </div>
+        </div>
+        <div className={css({marginLeft: "30px"})}>
+            <form  onSubmit={onSubmit}>
+                <button className={css({backgroundColor: "gray"})} type={"submit"}>
+                    送金
+                </button>
+            </form>
+        </div>
+
     </div>);
 };
 
@@ -51,4 +95,16 @@ const Home: NextPage = () => {
 // style.
 // ssr ssg isr .
 // global function.
+export async function getUniqueId(userName : string) : Promise<string>{
+    const cache = await caches.open("uniqueId");
+    const requestUrl = `https://playerdb.co/api/player/minecraft/${userName}`;
+    let cacheData = await cache.match(requestUrl);
+    if (!cacheData?.status) {
+        await cache.add(requestUrl);
+        cacheData = await cache.match(requestUrl);
+    }
+    const data = await cacheData!!.json();
+    return data.data.player.id;
+}
+
 export default Home;

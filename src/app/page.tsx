@@ -15,6 +15,7 @@ export default async function Home() {
         <div>
             Balance: {bal} <br/>
             Signed in as {session.user.name} <br/>
+            
         </div>
     )
 }
