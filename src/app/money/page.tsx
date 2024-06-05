@@ -90,12 +90,7 @@ const Home: NextPage = () =>{
 // type interface.
 // extend function.
 // function.
-// recoil.
-// selector.
-// style.
-// ssr ssg isr .
-// global function.
-export async function getUniqueId(userName : string) : Promise<string>{
+async function getUniqueId(userName : string) : Promise<string>{
     const cache = await caches.open("uniqueId");
     const requestUrl = `https://playerdb.co/api/player/minecraft/${userName}`;
     let cacheData = await cache.match(requestUrl);
@@ -106,5 +101,11 @@ export async function getUniqueId(userName : string) : Promise<string>{
     const data = await cacheData!!.json();
     return data.data.player.id;
 }
+// recoil.
+// selector.
+// style.
+// ssr ssg isr .
+// global function.
+
 
 export default Home;
