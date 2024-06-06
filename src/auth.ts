@@ -14,6 +14,7 @@ export interface ExtendedSession extends Session {
         uuid?: string | null;
     }
 }
+
 // @ts-ignore
 export const {handlers, signIn, signOut, auth} = NextAuth({
     providers: [
@@ -49,12 +50,12 @@ export const {handlers, signIn, signOut, auth} = NextAuth({
         },
     ],
     callbacks: {
-        async jwt({ token, account, profile}) {
+        async jwt({token, account, profile}) {
             // 初回サインイン時に accessToken をトークンに保存
             if (account) {
                 // First login, save the `access_token`, `refresh_token`, and other
                 // details into the JWT
-                console.log("account is", account)
+                console.log("account is", token)
 
                 const userProfile: User = {
                     id: profile!.id as string,
@@ -66,12 +67,26 @@ export const {handlers, signIn, signOut, auth} = NextAuth({
 
                 return {
                     access_token: account.access_token,
-                    expires_at: token.exp as number,
+                    expires_at: account.expires_at,
                     refresh_token: account.refresh_token,
                     user: userProfile,
                 }
-            } else if (Date.now() < token.exp! * 1000) {
+            } else if (Date.now() < (token.expires_at! as number) * 1000) {
                 // Subsequent logins, if the `access_token` is still valid, return the JWT
+                // let format = "YYYY-MM-DD HH:mm:ss";
+                // let currentTime = Date.now();
+                // let tokenExp = token.expires_at! as number * 1_000;
+                //
+                // // Unix時間をDateオブジェクトに変換
+                // let currentDate = new Date(currentTime);
+                // let tokenExpDate = new Date(tokenExp);
+                //
+                // // Dateオブジェクトを指定した形式の文字列に変換
+                // let currentDateString = currentDate.toLocaleString('ja-JP').replace(/\//g, '-');
+                // let tokenExpDateString = tokenExpDate.toLocaleString('ja-JP').replace(/\//g, '-');
+                //
+                // console.log("current time is", currentDateString);
+                // console.log("token exp    is", tokenExpDateString);
                 return token
             } else {
                 // Subsequent logins, if the `access_token` has expired, try to refresh it
@@ -82,7 +97,7 @@ export const {handlers, signIn, signOut, auth} = NextAuth({
                     // at their `/.well-known/openid-configuration` endpoint.
                     // i.e. https://accounts.google.com/.well-known/openid-configuration
                     const response = await fetch(process.env.SERVER_URL + "/oauth2/token", {
-                        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                        headers: {"Content-Type": "application/x-www-form-urlencoded"},
                         body: new URLSearchParams({
                             grant_type: "refresh_token",
                             client_id: process.env.CLIENT_ID!,
@@ -109,11 +124,11 @@ export const {handlers, signIn, signOut, auth} = NextAuth({
                 } catch (error) {
                     console.error("Error refreshing access token", error)
                     // The error property can be used client-side to handle the refresh token error
-                    return { ...token, error: "RefreshAccessTokenError" as const }
+                    return {...token, error: "RefreshAccessTokenError" as const}
                 }
             }
         },
-        async session({session, token}: { session: ExtendedSession; token: MyToken}) {
+        async session({session, token}: { session: ExtendedSession; token: MyToken }) {
             if (token.user) {
                 session.user = token.user as User
                 session.accessToken = token.access_token as string
