@@ -1,11 +1,20 @@
-import {auth, ExtendedSession, signIn, signOut} from "@/auth";
+import {auth, ExtendedSession, signIn, signOut} from "~/auth";
 import Image from "next/image";
 import React from "react";
-import {css} from "../../styled-system/css";
-import {Menu} from '@ark-ui/react'
-import PersonIcon from '@mui/icons-material/Person';
-import PersonAddIcon from '@mui/icons-material/PersonAdd';
-import LogoutIcon from '@mui/icons-material/Logout';
+import {css} from "@/styled-system/css";
+import * as Menu from "@/src/components/ui/menu"
+import SettingsIcon from '@mui/icons-material/Settings';
+import {HStack} from "@/styled-system/jsx";
+import {
+    ChevronRightIcon,
+    CreditCardIcon,
+    LogOutIcon,
+    MessageSquareIcon,
+    PlusCircleIcon,
+    UserIcon,
+    UserPlusIcon
+} from "lucide-react";
+import {props} from "@zag-js/menu";
 
 async function LoginButton() {
     const session = await auth();
@@ -31,29 +40,73 @@ async function LoginButton() {
 async function PlayerHead() {
     const session = await auth();
     const sessionData = session as ExtendedSession;
+
     return (
         <div>
             <Menu.Root>
                 <Menu.Trigger>
                     <Image
                         className={headImage}
-                        src={sessionData.user?.image ?? "https://crafthead.net/avatar/Steave" + "/64.png"}
-                        width="45"
-                        height="45"
+                        src={sessionData.user?.image ?? "https://crafthead.net/avatar/Steave" + "/128.png"}
+                        width="50"
+                        height="50"
                         alt="logo"
                     />
                 </Menu.Trigger>
                 <Menu.Positioner>
                     <Menu.Content>
-                        <Menu.ItemGroup className={menuStyle}>
-                            <Menu.ItemGroupLabel className={menuItems}>My Account</Menu.ItemGroupLabel>
+                        <Menu.ItemGroup>
+                            <Menu.ItemGroupLabel>My Account</Menu.ItemGroupLabel>
                             <Menu.Separator/>
-                            <Menu.Item className={menuItems} value="profile">
-                                <PersonIcon className={css({marginRight: "10px"})}/>
-                                Profile
+                            <Menu.Item value="profile">
+                                <HStack gap="6" justify="space-between" flex="1">
+                                    <HStack gap="2">
+                                        <UserIcon/>
+                                        Profile
+                                    </HStack>
+                                </HStack>
                             </Menu.Item>
-                            <Menu.Item className={menuItems} value="add">
-                                <div>
+                            <Menu.Item value="billing">
+                                <HStack gap="2">
+                                    <CreditCardIcon/> Billing
+                                </HStack>
+                            </Menu.Item>
+                            <Menu.Item value="settings">
+                                <HStack gap="6" justify="space-between" flex="1">
+                                    <HStack gap="2">
+                                        <SettingsIcon/> Settings
+                                    </HStack>
+                                </HStack>
+                            </Menu.Item>
+                            <Menu.Root positioning={{placement: 'right-start', gutter: -2}} {...props}>
+                                <Menu.TriggerItem>
+                                    <HStack gap="2">
+                                        <UserPlusIcon/>
+                                        Invite member
+                                    </HStack>
+                                    <ChevronRightIcon/>
+                                </Menu.TriggerItem>
+                                <Menu.Positioner>
+                                    <Menu.Content>
+                                        <Menu.Item value="message">
+                                            <HStack gap="2">
+                                                <MessageSquareIcon/> Message
+                                            </HStack>
+                                        </Menu.Item>
+                                        <Menu.Separator/>
+                                        <Menu.Item value="other">
+                                            <HStack gap="2">
+                                                <PlusCircleIcon/>
+                                                More Options...
+                                            </HStack>
+                                        </Menu.Item>
+                                    </Menu.Content>
+                                </Menu.Positioner>
+                            </Menu.Root>
+                            <Menu.Separator/>
+                            <Menu.Item value="logout">
+
+
                                     <form
                                         action={async (formData) => {
                                             "use server"
@@ -61,26 +114,13 @@ async function PlayerHead() {
                                         }}
                                     >
                                         <button type="submit">
-                                            <PersonAddIcon className={css({marginRight: "10px"})}/>
-                                            Add account
+                                            <HStack gap="2">
+                                                <LogOutIcon/>
+                                                <div>Sign out</div>
+                                            </HStack>
                                         </button>
                                     </form>
-                                </div>
-                            </Menu.Item>
-                            <Menu.Item className={menuItems} value="logout">
-                                <div>
-                                    <form
-                                        action={async (formData) => {
-                                            "use server"
-                                            await signOut()
-                                        }}
-                                    >
-                                        <button type="submit">
-                                            <LogoutIcon className={css({marginRight: "10px"})}/>
-                                            Sign out
-                                        </button>
-                                    </form>
-                                </div>
+
                             </Menu.Item>
                         </Menu.ItemGroup>
                     </Menu.Content>
@@ -122,9 +162,6 @@ const loginBoxStyle = css({
         "#0066ff",
 });
 
-const headStyle = css({
-    marginLeft: "25px",
-});
 
 const headImage = css({
     borderRadius: "12%",
@@ -132,36 +169,6 @@ const headImage = css({
         "10px",
 });
 
-const menuStyle = css({
-    backgroundColor: "rgba(100,166,223,0.5)",
-    borderRadius:
-        "5px",
-    padding:
-        "10px",
-    margin:
-        "10px",
-    border: "1px solid #000000",
-});
-
-
-const menuItems = css({
-    padding: "15px",
-    paddingRight:
-        "40px",
-    fontSize:
-        "0.9rem",
-});
-
-
-const header = css({
-    display: "flex",
-    paddingTop:
-        "25px",
-    paddingBottom:
-        "40px",
-    background:
-        "#82e477",
-});
 // ssr ssg isr .
 // global function.
 export default LoginButton;

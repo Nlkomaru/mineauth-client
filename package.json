@@ -17,6 +17,7 @@
     "@mui/material": "^5.15.19",
     "jotai": "^2.8.3",
     "jotai-location": "^0.5.5",
+    "lucide-react": "^0.394.0",
     "next": "14.2.3",
     "next-auth": "^5.0.0-beta.18",
     "react": "^18",
@@ -24,6 +25,7 @@
   },
   "devDependencies": {
     "@pandacss/dev": "^0.40.1",
+    "@park-ui/panda-preset": "^0.38.0",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

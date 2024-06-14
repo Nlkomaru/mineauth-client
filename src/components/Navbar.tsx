@@ -1,16 +1,16 @@
 import Link from "next/link";
 import React from "react";
-import {css} from '../../styled-system/css';
-import LoginButton from "@/components/LoginButton";
+import {css} from '@/styled-system/css';
+import LoginButton from "~/components/LoginButton";
 
 function Header() {
     return (
         <div className={header}>
-            <Link href="/">
-                <div className={logo}>
-                    MineAuth Client
-                </div>
+
+            <Link className={logo} href="/">
+                MineAuth Client
             </Link>
+
             <div className={linkBox}>
                 <Link href="/money">
                     <div className={linkBoxStyle}>おかね</div>
@@ -24,10 +24,10 @@ function Header() {
 const header = css({
     display: "flex",
     marginTop: "25px",
-    paddingRight: "160px",
-    paddingLeft: "160px",
+    padding: "0px 300px 0px 300px",
     marginBottom: "40px",
-    justifyContent: "center"
+    justifyContent: "center",
+    alignItems: "center"
 });
 
 const logo = css({
@@ -40,7 +40,6 @@ const linkBoxStyle = css({
     paddingTop: "20px",
     paddingLeft: "40px",
     paddingRight: "60px",
-    fontSize: "17px",
 });
 
 

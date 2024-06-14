@@ -1,4 +1,4 @@
-import {auth, ExtendedSession} from "@/auth";
+import {auth, ExtendedSession} from "@/src/auth";
 
 export default async function Home() {
     const session = await auth() as ExtendedSession;

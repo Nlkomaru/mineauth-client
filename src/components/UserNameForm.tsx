@@ -1,7 +1,6 @@
-
 import React from 'react';
 import {atom, useAtom, useAtomValue} from 'jotai';
-import {css} from "../../styled-system/css";
+import {css} from "@/styled-system/css";
 
 export const userNameAtom = atom("");
 const imageAtom = atom((get) => `https://minotar.net/helm/${get(userNameAtom)}/32.png`);
